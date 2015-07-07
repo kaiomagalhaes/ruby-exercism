@@ -59,7 +59,7 @@ class BeerSongTest < Minitest::Test
   end
 
   def test_the_whole_song
-#    skip
+    skip
     assert_equal song.verses(99, 0), song.sing
   end
 end

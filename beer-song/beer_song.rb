@@ -6,13 +6,9 @@ class BeerSong
   end
 
   def verses final, init
-    t = ""
-    (init..final).to_a.reverse.each do |n|
-      t << "#{verse(n)}\n"
-    end
-    puts t
-    t
+   (init..final).reverse_each.collect {|n| verse(n)}.join("\n")
   end
+
   def sing
     verses(99,0)
   end
@@ -32,7 +28,7 @@ class BeerSong
   def second_sentence num_bottles, plural
     return "Go to the store and buy some more, 99 bottles of beer on the wall.\n" if num_bottles == 99
     take_what = plural ? 'one' : 'it'
-    beers_left =num_bottles == 0? "no more" : num_bottles 
+    beers_left =num_bottles == 0? "no more" : num_bottles
     word_end = num_bottles == 1 ? '' : 's'
     "Take #{take_what} down and pass it around, #{beers_left} bottle#{word_end} of beer on the wall.\n"
   end
