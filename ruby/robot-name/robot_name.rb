@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Can be found at: http://exercism.io/submissions/5befa43a2e4844b4a9036323ca58b312
 class Robot
   @@used_names = []
 
