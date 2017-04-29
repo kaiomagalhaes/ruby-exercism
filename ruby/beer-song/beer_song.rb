@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
+# Can be found at: http://exercism.io/submissions/825705c47d9947d18b07991a0d28b0eb
 class BeerSong
-  def verse(num_bottles)
-    final_bottles = num_bottles > 0 ? num_bottles - 1 : 99
-    create_sentence num_bottles, final_bottles
+  def verses(last, first)
+    (first..last).collect { |n| "#{verse(n)}\n" }.reverse.join
   end
 
-  def verses(final, init)
-    (init..final).reverse_each.collect { |n| verse(n) }.join("\n")
+  def verse(number)
+    sentences(number)
   end
 
   def sing
@@ -14,23 +16,46 @@ class BeerSong
 
   private
 
-  def create_sentence(init_number, final_number)
-    is_plural = init_number != 1
-    first_sentence(init_number, is_plural) + second_sentence(final_number, is_plural)
+  def sentences(number)
+    plural = number != 1
+    "#{first_sentence(number, plural)}#{second_sentence(number, plural)}"
   end
 
-  def first_sentence(num_bottles, plural)
-    word_end = plural ? 's' : ''
-    number_bottles_sentence = num_bottles == 0 ? 'No more' : num_bottles
-    number_sentence = "#{number_bottles_sentence} bottle#{word_end} of beer"
-    "#{number_sentence} on the wall, #{number_sentence.downcase}.\n"
+  def first_sentence(number, plural)
+    if number.positive?
+      "#{number} #{bootle(plural)} of beer on the wall, "\
+        "#{number} #{bootle(plural)} of beer.\n"
+    else
+      "No more bottles of beer on the wall, no more bottles of beer.\n"
+    end
   end
 
-  def second_sentence(num_bottles, plural)
-    return "Go to the store and buy some more, 99 bottles of beer on the wall.\n" if num_bottles == 99
-    take_what = plural ? 'one' : 'it'
-    beers_left = num_bottles == 0 ? 'no more' : num_bottles
-    word_end = num_bottles == 1 ? '' : 's'
-    "Take #{take_what} down and pass it around, #{beers_left} bottle#{word_end} of beer on the wall.\n"
+  def second_sentence(number, plural)
+    if number.positive?
+      "Take #{article(plural)} down and pass it around,"\
+       " #{second_sentence_number_text(number)} of beer on the wall.\n"
+    else
+      "Go to the store and buy some more, 99 bottles of beer on the wall.\n"
+    end
+  end
+
+  def second_sentence_number_text(number)
+    current_last_number = number - 1
+    plural = current_last_number != 1
+    bootle_word = bootle(plural)
+    sentence = current_last_number.zero? ? 'no more' : current_last_number
+    "#{sentence} #{bootle_word}"
+  end
+
+  def bootle(plural)
+    "bottle#{termination(plural)}"
+  end
+
+  def article(plural)
+    plural ? 'one' : 'it'
+  end
+
+  def termination(plural)
+    plural ? 's' : ''
   end
 end
