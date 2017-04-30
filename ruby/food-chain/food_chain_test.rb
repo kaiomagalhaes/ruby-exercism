@@ -18,11 +18,4 @@ class FoodChainTest < Minitest::Test
     expected = IO.read(song_file)
     assert_equal expected, FoodChain.song
   end
-
-  # This is some simple book-keeping to let people who are
-  # giving feedback know which version of the exercise you solved.
-  def test_version
-    # skip
-    assert_equal 1, FoodChain::VERSION
-  end
 end

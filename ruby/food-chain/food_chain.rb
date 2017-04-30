@@ -1,59 +1,67 @@
-class FoodChain
-  @animals = %w[fly spider bird cat dog goat cow horse]
 
-  @animals_phrases = {
+# Can be found at: http://exercism.io/submissions/b83d191cfc4745a8909b0c10536d8eb4
+class FoodChain
+  HORSE = 'horse'
+  FLY = 'fly'
+  SPIDER = 'spider'
+  BIRD = 'bird'
+
+  ANIMALS = [FLY, SPIDER, BIRD, 'cat', 'dog', 'goat', 'cow', HORSE].freeze
+
+  ANIMALS_PHRASES = {
     'bird' => "How absurd to swallow a bird!\n",
     'cat' => "Imagine that, to swallow a cat!\n",
     'dog' => "What a hog, to swallow a dog!\n",
     'goat' => "Just opened her throat and swallowed a goat!\n",
     'cow' => "I don't know how she swallowed a cow!\n"
-  }
+  }.freeze
 
   def self.song
-    swallowed_animals = []
-    sentence = ''
-    @animals.each do |animal|
-      animal_is_not_horse = animal != 'horse'
-      sentence << first_sentence(animal)
-      sentence << animal_phrase(animal)
-      swallowed_animals << animal
-      if animal_is_not_horse
-        swallowed_animals.reverse.each_with_index do |swallowed_animal, index|
-          swallowed_animal_aux = swallowed_animals.reverse[index.next]
-          sentence << swallowed_to_catch(swallowed_animal, swallowed_animal_aux)
-        end
+    ANIMALS.each_with_index.collect do |animal, index|
+      sentence = swallowed_sentence(animal)
+      sentence << jingle_sentence(animal)
+      sentence << animal_sentence(animal) if ANIMALS_PHRASES.keys.include?(animal)
+
+      unless animal.equal?(HORSE)
+        sentence << swallowed_to(ANIMALS[index - 1], animal) if index.positive?
+        sentence << swallowed_to_sentences(index - 1)
       end
-      last_animal_swallowed = swallowed_animals.last if animal_is_not_horse
-      sentence << swallowed_to_catch(animal, last_animal_swallowed) if last_animal_swallowed
-      sentence << last_sentence(animal)
-      sentence
-    end
-    sentence
+
+      sentence << die_sentence(animal)
+    end.join
   end
 
-  private
-
-  def self.first_sentence(animal)
-    first_sentence_phrase = "I know an old lady who swallowed a #{animal}.\n"
-    first_sentence_phrase << "It wriggled and jiggled and tickled inside her.\n" if animal == 'spider'
-    first_sentence_phrase
+  def self.swallowed_sentence(animal)
+    "I know an old lady who swallowed a #{animal}.\n"
   end
 
-  def self.animal_phrase(animal)
-    phrase = @animals_phrases[animal]
-    phrase ||= ''
-    phrase
+  def self.die_sentence(animal)
+    return "She's dead, of course!\n" if animal.equal?(HORSE)
+    "I don't know why she swallowed the fly. Perhaps she'll die.\n\n"
   end
 
-  def self.swallowed_to_catch(first, last)
-    return '' if !first || !last || first == last
-    swallowed_to_catch_phrase = "She swallowed the #{first} to catch the #{last}"
-    swallowed_to_catch_phrase << (last != 'spider' ? '.' : ' that wriggled and jiggled and tickled inside her.')
-
-    swallowed_to_catch_phrase + "\n"
+  def self.jingle_sentence(animal)
+    return "It wriggled and jiggled and tickled inside her.\n" if animal.equal?(SPIDER)
+    ''
   end
 
-  def self.last_sentence(animal)
-    animal != 'horse' ? "I don't know why she swallowed the fly. Perhaps she'll die.\n\n" : "She's dead, of course!\n"
+  def self.swallowed_to(prey, hunter)
+    generic_sentence = "She swallowed the #{hunter} to catch the #{prey}.\n"
+    return generic_sentence unless hunter.equal?(BIRD)
+
+    "She swallowed the #{hunter} to catch the #{prey} that wriggled and jiggled and tickled inside her.\n"
+  end
+
+  def self.animal_sentence(animal)
+    ANIMALS_PHRASES[animal]
+  end
+
+  def self.swallowed_to_sentences(index)
+    return '' unless index.positive?
+    (1..index).collect do |i|
+      prey = ANIMALS[i]
+      hunter = ANIMALS[i - 1]
+      swallowed_to(hunter, prey) unless prey.equal?(HORSE)
+    end.reject(&:nil?).reverse.join
   end
 end
