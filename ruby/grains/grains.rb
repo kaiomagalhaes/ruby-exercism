@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Grains
   def self.square(number)
     2**(number - 1)
