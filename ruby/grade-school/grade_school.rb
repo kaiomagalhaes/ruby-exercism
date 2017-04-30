@@ -1,3 +1,6 @@
+# frozen_string_literal: true
+
+# Can be found at: http://exercism.io/submissions/3aed1d0d61074cdabdc58153964d3841
 class School
   def initialize
     @students = Hash.new { |hsh, key| hsh[key] = [] }
